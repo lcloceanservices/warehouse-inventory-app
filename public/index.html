@@ -22,10 +22,12 @@
   .ch h2{font-family:'Montserrat';font-weight:800;font-size:14px;color:var(--navy);margin:0;letter-spacing:.4px;text-transform:uppercase;}
   .cb{padding:15px;}
   .bigbtn{width:100%;padding:18px;font-family:'Montserrat';font-weight:800;font-size:18px;border:none;border-radius:13px;background:var(--teal);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:.5px;}
-  .bigbtn:active{opacity:.8;}
-  .bigbtn.coral{background:var(--coral);}
-  .bigbtn:disabled{opacity:.5;}
+  .bigbtn:active{opacity:.8;}.bigbtn.coral{background:var(--coral);}.bigbtn:disabled{opacity:.5;}
   .ghost{background:var(--card2);color:var(--accent);font-weight:700;border:none;border-radius:11px;padding:12px 16px;font-size:14px;cursor:pointer;font-family:'Montserrat';}
+  .modes{display:flex;gap:8px;margin-bottom:13px;}
+  .mode{flex:1;padding:12px 8px;border:2px solid var(--card2);border-radius:11px;background:var(--card);cursor:pointer;text-align:center;font-family:'Montserrat';font-weight:700;font-size:13px;color:var(--muted);line-height:1.25;}
+  .mode small{display:block;font-family:'Inter';font-weight:500;font-size:11px;margin-top:3px;}
+  .mode.sel{border-color:var(--accent);color:var(--accent);background:#f5fbfc;}
   .prev{margin-top:13px;border-radius:11px;overflow:hidden;border:1px solid var(--line);}
   .prev img{width:100%;display:block;max-height:360px;object-fit:contain;background:#eef2f5;}
   .prev .m{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;font-size:12px;color:var(--muted);}
@@ -35,8 +37,8 @@
   th.n,td.n{text-align:right;}
   td{padding:7px 10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle;}
   td input{width:100%;border:1px solid var(--line);border-radius:7px;padding:8px;font-size:14px;font-family:inherit;background:#fff;color:var(--text);}
-  td input.pb{width:58px;text-align:right;}
-  td input.bx{width:58px;text-align:right;font-weight:700;}
+  td input.pu{width:56px;text-align:right;}
+  td input.qt{width:56px;text-align:right;font-weight:700;}
   tr.review td{background:var(--warnbg);}
   .prod input{font-weight:600;color:var(--navy);}
   .del{background:none;border:none;color:var(--coral);font-size:20px;cursor:pointer;line-height:1;padding:0 4px;}
@@ -46,15 +48,15 @@
   .field{margin-bottom:12px;}
   .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:800;font-family:'Montserrat';margin-bottom:6px;display:block;}
   .field input,textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:11px;font-size:14px;font-family:inherit;background:#fff;color:var(--text);}
-  textarea{min-height:165px;line-height:1.5;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;resize:vertical;}
+  .field input.wr{font-family:'Montserrat';font-weight:800;font-size:18px;letter-spacing:1px;color:var(--navy);border:2px solid var(--teal);}
+  textarea{min-height:170px;line-height:1.5;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;resize:vertical;}
+  .two{display:flex;gap:12px;}.two>div{flex:1;}
   .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:13px;}
   .chan{font-size:12.5px;color:var(--muted);}.chan b{color:var(--accent);}
   .note{font-size:11.5px;color:var(--muted);margin-top:9px;line-height:1.45;}
   .status{font-size:13px;font-weight:700;margin-top:11px;padding:10px 12px;border-radius:9px;display:none;}
   .status.show{display:block;}
-  .status.ok{background:var(--greenbg);color:var(--green);}
-  .status.err{background:var(--warnbg);color:var(--warn);}
-  .status.busy{background:#eaf3f4;color:var(--accent);}
+  .status.ok{background:var(--greenbg);color:var(--green);}.status.err{background:var(--warnbg);color:var(--warn);}.status.busy{background:#eaf3f4;color:var(--accent);}
   .status a{color:var(--green);font-weight:800;}
   .hide{display:none;}
   .spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;display:inline-block;animation:sp .7s linear infinite;}
@@ -74,48 +76,62 @@
 </header>
 
 <main>
-  <!-- STEP 1 -->
+  <!-- STEP 1: receipt details -->
   <div class="card">
-    <div class="ch"><span class="sn">1</span><h2>Take Photo</h2></div>
+    <div class="ch"><span class="sn">1</span><h2>Receipt Details</h2></div>
     <div class="cb">
+      <div class="two">
+        <div class="field"><label class="lbl">Warehouse Receipt #</label><input id="wr" class="wr" placeholder="WR #" inputmode="numeric"></div>
+        <div class="field"><label class="lbl">PO / Ref (optional)</label><input id="po" placeholder="e.g. 9323865" inputmode="numeric"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: photo -->
+  <div class="card">
+    <div class="ch"><span class="sn">2</span><h2>Take Photo</h2></div>
+    <div class="cb">
+      <div class="modes">
+        <div class="mode sel" id="modeCount" data-mode="count">Count everything<small>Counts each item in the photo</small></div>
+        <div class="mode" id="modeSingle" data-mode="identify">One item — set qty<small>Snap one item, you type how many</small></div>
+      </div>
       <button id="shootBtn" class="bigbtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19V8a2 2 0 0 0-2-2h-3l-2-3H10L8 6H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2z"/><circle cx="12" cy="13" r="4"/></svg> Take / Choose Photo</button>
-      <input id="file" type="file" accept="image/*" capture="environment" class="hide">
+      <input id="file" type="file" accept="image/*" class="hide">
       <div id="prevWrap" class="prev hide">
         <img id="prevImg" alt="receiving photo">
         <div class="m"><span><b id="prevName"></b></span><button id="changeBtn" class="ghost" style="padding:6px 12px;font-size:12px">Change</button></div>
       </div>
-      <button id="countBtn" class="bigbtn coral hide" style="margin-top:13px"><span id="countLbl">Count Boxes</span></button>
-      <div class="note">Best results: lay boxes flat in a single layer, good light, shoot straight down. Stacked boxes get flagged for a recount instead of guessed.</div>
+      <button id="countBtn" class="bigbtn coral hide" style="margin-top:13px"><span id="countLbl">Count Items</span></button>
+      <div id="hintCount" class="note">Lay items in a single layer, good light, shoot straight down. Anything stacked gets flagged for a recount instead of guessed.</div>
+      <div id="hintSingle" class="note hide">Snap a clear shot of one item. It identifies what it is, then you type the quantity on the next step.</div>
     </div>
   </div>
 
-  <!-- STEP 2 -->
-  <div id="step2" class="card hide">
-    <div class="ch"><span class="sn">2</span><h2>Verify Count</h2></div>
+  <!-- STEP 3: verify -->
+  <div id="step3" class="card hide">
+    <div class="ch"><span class="sn">3</span><h2>Verify Count</h2></div>
     <div class="cb" style="padding:0">
       <table>
-        <thead><tr><th>Product</th><th>Variant</th><th class="n">Per Box</th><th class="n">Boxes</th><th class="n">Total</th><th></th></tr></thead>
+        <thead><tr><th>Item</th><th>Detail</th><th class="n">Per Unit</th><th class="n">Qty</th><th class="n">Total</th><th></th></tr></thead>
         <tbody id="tbody"></tbody>
-        <tfoot><tr><td colspan="3">TOTALS</td><td class="n" id="tBoxes">0</td><td class="n" id="tUnits">0</td><td></td></tr></tfoot>
+        <tfoot><tr><td colspan="3">TOTALS</td><td class="n" id="tQty">0</td><td class="n" id="tUnits">0</td><td></td></tr></tfoot>
       </table>
       <div style="padding:14px 15px">
-        <button id="addRow" class="ghost">+ Add product</button>
+        <button id="addRow" class="ghost">+ Add item</button>
         <div id="verifyBadge" class="verified"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg> <span id="verifyText">Exact count verified</span></div>
         <div id="notesLine" class="note hide"></div>
+        <div class="note">Per Unit = how many are inside each box/pack (use 1 for a single item). Qty = how many of that item. Edit anything — totals update live.</div>
       </div>
     </div>
   </div>
 
-  <!-- STEP 3 -->
-  <div id="step3" class="card hide">
-    <div class="ch"><span class="sn">3</span><h2>Post to Slack</h2></div>
+  <!-- STEP 4: post -->
+  <div id="step4" class="card hide">
+    <div class="ch"><span class="sn">4</span><h2>Post to Slack</h2></div>
     <div class="cb">
-      <div class="field"><label class="lbl">PO / Reference (optional)</label><input id="po" placeholder="e.g. 9323865" inputmode="numeric"></div>
       <label class="lbl">Message (editable)</label>
       <textarea id="msg"></textarea>
-      <div class="row">
-        <button id="postBtn" class="bigbtn coral" style="flex:1"><span id="postLbl">Post to Slack</span></button>
-      </div>
+      <div class="row"><button id="postBtn" class="bigbtn coral" style="flex:1"><span id="postLbl">Post to Slack</span></button></div>
       <div class="chan" style="margin-top:10px">Posts the photo + this message to <b>#warehouse-inventory-app</b></div>
       <div id="status" class="status"></div>
     </div>
@@ -125,63 +141,77 @@
 <script>
 let photoFile = null;
 let items = [];
+let mode = 'count';
 let serverNotes = '';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
 function totals(){
-  const boxes = items.reduce((a,b)=>a+(Number(b.boxes)||0),0);
-  const units = items.reduce((a,b)=>a+(Number(b.perBox)||0)*(Number(b.boxes)||0),0);
-  return {boxes, units};
+  const qty = items.reduce((a,b)=>a+(Number(b.qty)||0),0);
+  const units = items.reduce((a,b)=>a+(Number(b.perUnit)||0)*(Number(b.qty)||0),0);
+  return {qty, units};
 }
 
 function renderTable(){
   const tb = $('tbody'); tb.innerHTML='';
   items.forEach((it,i)=>{
-    const tot=(Number(it.perBox)||0)*(Number(it.boxes)||0);
+    const tot=(Number(it.perUnit)||0)*(Number(it.qty)||0);
     const tr=document.createElement('tr');
     if(it.needs_review) tr.className='review';
     tr.innerHTML =
-      '<td class="prod"><input data-i="'+i+'" data-k="brand" value="'+esc(it.brand)+'">'+(it.needs_review?'<span class="reviewtag">RECOUNT</span>':'')+'</td>'+
-      '<td><input data-i="'+i+'" data-k="variant" value="'+esc(it.variant)+'"></td>'+
-      '<td class="n"><input class="pb" type="number" min="0" inputmode="numeric" data-i="'+i+'" data-k="perBox" value="'+(it.perBox??'')+'"></td>'+
-      '<td class="n"><input class="bx" type="number" min="0" inputmode="numeric" data-i="'+i+'" data-k="boxes" value="'+(it.boxes??'')+'"></td>'+
+      '<td class="prod"><input data-i="'+i+'" data-k="name" value="'+esc(it.name)+'">'+(it.needs_review?'<span class="reviewtag">RECOUNT</span>':'')+'</td>'+
+      '<td><input data-i="'+i+'" data-k="detail" value="'+esc(it.detail)+'"></td>'+
+      '<td class="n"><input class="pu" type="number" min="0" inputmode="numeric" data-i="'+i+'" data-k="perUnit" value="'+(it.perUnit??'')+'"></td>'+
+      '<td class="n"><input class="qt" type="number" min="0" inputmode="numeric" data-i="'+i+'" data-k="qty" value="'+(it.qty??'')+'"></td>'+
       '<td class="n">'+tot+'</td>'+
       '<td><button class="del" data-del="'+i+'" aria-label="remove">&times;</button></td>';
     tb.appendChild(tr);
   });
-  const t=totals(); $('tBoxes').textContent=t.boxes; $('tUnits').textContent=t.units;
+  const t=totals(); $('tQty').textContent=t.qty; $('tUnits').textContent=t.units;
 
   tb.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{
     const i=+e.target.dataset.i, k=e.target.dataset.k;
-    items[i][k] = (k==='perBox'||k==='boxes') ? (e.target.value===''?'':Number(e.target.value)) : e.target.value;
-    if(k==='perBox'||k==='boxes'){ renderTable(); buildMsg(); } else buildMsg();
+    items[i][k] = (k==='perUnit'||k==='qty') ? (e.target.value===''?'':Number(e.target.value)) : e.target.value;
+    if(k==='perUnit'||k==='qty'){ renderTable(); buildMsg(); } else buildMsg();
   }));
   tb.querySelectorAll('.del').forEach(b=>b.addEventListener('click',e=>{ items.splice(+e.target.dataset.del,1); renderTable(); buildMsg(); }));
 
   const review = items.some(it=>it.needs_review);
   const badge=$('verifyBadge'), vt=$('verifyText');
   if(review){ badge.style.background='var(--warnbg)'; badge.style.color='var(--warn)'; vt.textContent='Some items flagged — recount before posting'; }
-  else { badge.style.background='var(--greenbg)'; badge.style.color='var(--green)'; vt.textContent='Exact count verified'; }
+  else { badge.style.background='var(--greenbg)'; badge.style.color='var(--green)'; vt.textContent='Count verified'; }
+}
+
+function lineText(it){
+  const per=Number(it.perUnit)||0, qty=Number(it.qty)||0, tot=per*qty;
+  const name=it.name+(it.detail?' – '+it.detail:'');
+  if(per>1) return '• '+name+' ('+per+'-ct) — '+qty+' '+(qty===1?'box':'boxes')+' — '+tot+' units';
+  return '• '+name+' — '+qty+' '+(qty===1?'unit':'units');
 }
 
 function buildMsg(){
   const t=totals();
-  const lines=items.filter(it=>it.brand).map(it=>{
-    const tot=(Number(it.perBox)||0)*(Number(it.boxes)||0);
-    const pb = it.perBox? ' ('+it.perBox+'-ct)':'';
-    const bx = Number(it.boxes)||0;
-    return '• '+it.brand+(it.variant?' – '+it.variant:'')+pb+' — '+bx+' '+(bx===1?'box':'boxes')+' — '+tot+' units'+(it.needs_review?'  ⚠ recount':'');
-  }).join('\n');
+  const lines=items.filter(it=>it.name).map(it=>lineText(it)+(it.needs_review?'  ⚠ recount':'')).join('\n');
+  const wr=$('wr').value.trim();
   const po=$('po').value.trim();
-  const ref = po? ' / PO# '+po : '';
-  const msg=':anchor: *LCL Ocean Services — Receiving Check*'+ref+'\n\n'+lines+'\n\n*Totals:* '+t.boxes+' boxes / '+t.units+' units'+
-    (items.some(it=>it.needs_review)?'\n:warning: Some items need a recount (flagged above).':'\n:white_check_mark: Exact count — single layer verified');
-  $('msg').value=msg;
+  const header = wr ? (':package: *WR# '+wr+'*\n_LCL Ocean Services — Receiving Check_'+(po?' / PO# '+po:''))
+                    : (':package: *LCL Ocean Services — Receiving Check*'+(po?' / PO# '+po:''));
+  const foot = items.some(it=>it.needs_review)
+      ? '\n:warning: Some items need a recount (flagged above).'
+      : '\n:white_check_mark: Count verified';
+  $('msg').value = header+'\n\n'+lines+'\n\n*Totals:* '+t.qty+' items / '+t.units+' units'+foot;
 }
 
-// Downscale big phone photos so the vision API and Slack uploads stay fast and within limits.
+function setMode(m){
+  mode=m;
+  $('modeCount').classList.toggle('sel', m==='count');
+  $('modeSingle').classList.toggle('sel', m==='identify');
+  $('hintCount').classList.toggle('hide', m!=='count');
+  $('hintSingle').classList.toggle('hide', m!=='identify');
+  $('countLbl').textContent = (m==='identify') ? 'Identify Item' : 'Count Items';
+}
+
 function resizeImage(file, maxDim){
   return new Promise((resolve)=>{
     const img=new Image();
@@ -190,11 +220,7 @@ function resizeImage(file, maxDim){
       if(Math.max(w,h)>maxDim){ const s=maxDim/Math.max(w,h); w=Math.round(w*s); h=Math.round(h*s); }
       const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
       cv.getContext('2d').drawImage(img,0,0,w,h);
-      cv.toBlob(b=>{
-        if(!b){ resolve(file); return; }
-        const name=(file.name||'receiving').replace(/\.[^.]+$/,'')+'.jpg';
-        resolve(new File([b], name, {type:'image/jpeg'}));
-      },'image/jpeg',0.85);
+      cv.toBlob(b=>{ if(!b){resolve(file);return;} const name=(file.name||'receiving').replace(/\.[^.]+$/,'')+'.jpg'; resolve(new File([b],name,{type:'image/jpeg'})); },'image/jpeg',0.85);
     };
     img.onerror=()=>resolve(file);
     img.src=URL.createObjectURL(file);
@@ -211,25 +237,28 @@ async function showPhoto(f){
 async function runCount(){
   if(!photoFile) return;
   const btn=$('countBtn'), lbl=$('countLbl');
-  btn.disabled=true; lbl.innerHTML='<span class="spin"></span> Counting…';
+  btn.disabled=true; lbl.innerHTML='<span class="spin"></span> '+(mode==='identify'?'Identifying…':'Counting…');
   try{
-    const fd=new FormData(); fd.append('photo', photoFile, photoFile.name);
+    const fd=new FormData(); fd.append('photo', photoFile, photoFile.name); fd.append('mode', mode);
     const r=await fetch('/api/count',{method:'POST',body:fd});
     const data=await r.json();
     if(!r.ok) throw new Error((data && data.error) || 'Count failed');
-    items=(data.items||[]).map(it=>({brand:it.brand||'',variant:it.variant||'',perBox:it.perBox??'',boxes:it.boxes??0,needs_review:!!it.needs_review}));
+    items=(data.items||[]).map(it=>({name:it.name||'',detail:it.detail||'',perUnit:it.perUnit??1,qty:it.qty??(mode==='identify'?'':0),needs_review:!!it.needs_review}));
     serverNotes=data.notes||'';
-    if(items.length===0) items.push({brand:'',variant:'',perBox:'',boxes:0,needs_review:false});
+    if(items.length===0) items.push({name:'',detail:'',perUnit:1,qty:'',needs_review:false});
     renderTable(); buildMsg();
-    $('step2').classList.remove('hide'); $('step3').classList.remove('hide');
-    if(serverNotes){ const n=$('notesLine'); n.textContent='Note: '+serverNotes; n.classList.remove('hide'); }
-    $('step2').scrollIntoView({behavior:'smooth'});
+    $('step3').classList.remove('hide'); $('step4').classList.remove('hide');
+    const n=$('notesLine');
+    if(mode==='identify'){ n.textContent='Item identified — now type the Qty (and Per Unit if it’s a multi-pack).'; n.classList.remove('hide'); }
+    else if(serverNotes){ n.textContent='Note: '+serverNotes; n.classList.remove('hide'); }
+    else n.classList.add('hide');
+    $('step3').scrollIntoView({behavior:'smooth'});
   }catch(e){
-    items=[{brand:'',variant:'',perBox:'',boxes:0,needs_review:false}];
+    items=[{name:'',detail:'',perUnit:1,qty:'',needs_review:false}];
     renderTable(); buildMsg();
-    $('step2').classList.remove('hide'); $('step3').classList.remove('hide');
-    const n=$('notesLine'); n.textContent='Auto-count unavailable ('+e.message+'). Enter the counts manually.'; n.classList.remove('hide');
-  }finally{ btn.disabled=false; lbl.textContent='Re-count'; }
+    $('step3').classList.remove('hide'); $('step4').classList.remove('hide');
+    const n=$('notesLine'); n.textContent='Auto-read unavailable ('+e.message+'). Enter the item and quantity manually.'; n.classList.remove('hide');
+  }finally{ btn.disabled=false; lbl.textContent=(mode==='identify'?'Re-identify':'Re-count'); }
 }
 
 async function post(){
@@ -250,11 +279,14 @@ async function post(){
   }finally{ btn.disabled=false; lbl.textContent='Post to Slack'; }
 }
 
+$('modeCount').addEventListener('click',()=>setMode('count'));
+$('modeSingle').addEventListener('click',()=>setMode('identify'));
 $('shootBtn').addEventListener('click',()=>$('file').click());
 $('changeBtn').addEventListener('click',()=>$('file').click());
 $('file').addEventListener('change',e=>{ if(e.target.files[0]) showPhoto(e.target.files[0]); });
 $('countBtn').addEventListener('click',runCount);
-$('addRow').addEventListener('click',()=>{ items.push({brand:'',variant:'',perBox:24,boxes:0,needs_review:false}); renderTable(); buildMsg(); });
+$('addRow').addEventListener('click',()=>{ items.push({name:'',detail:'',perUnit:1,qty:'',needs_review:false}); renderTable(); buildMsg(); });
+$('wr').addEventListener('input',buildMsg);
 $('po').addEventListener('input',buildMsg);
 $('postBtn').addEventListener('click',post);
 </script>
