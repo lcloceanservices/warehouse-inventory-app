@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Warehouse Inventory — LCL Ocean Services</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f4f6f8;--card:#fff;--card2:#e9eef2;--text:#2c3a4f;--muted:#8a96a3;--accent:#3f9aa7;--teal:#52b3c0;--navy:#18294d;--coral:#e8623f;--line:#e4e8ec;--green:#0f6e56;--greenbg:#e1f5ee;--warnbg:#fdf0ec;--warn:#993c1d;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0;font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--card);border-bottom:3px solid var(--teal);position:sticky;top:0;z-index:10;}
+  header h1{font-family:'Montserrat',sans-serif;font-weight:800;font-size:15px;margin:0;letter-spacing:.4px;color:var(--navy);display:flex;align-items:center;gap:9px;}
+  .hublink{font-size:12px;font-weight:700;font-family:'Montserrat',sans-serif;color:#fff;background:var(--teal);padding:6px 13px;border-radius:999px;text-decoration:none;}
+  main{padding:14px;max-width:780px;margin:0 auto;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 6px 20px rgba(24,41,77,.07);margin-bottom:14px;overflow:hidden;}
+  .ch{display:flex;align-items:center;gap:9px;padding:13px 15px;border-bottom:1px solid var(--line);}
+  .sn{width:23px;height:23px;border-radius:50%;background:var(--teal);color:#fff;font-family:'Montserrat';font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;}
+  .ch h2{font-family:'Montserrat';font-weight:800;font-size:14px;color:var(--navy);margin:0;letter-spacing:.4px;text-transform:uppercase;}
+  .cb{padding:15px;}
+  .bigbtn{width:100%;padding:18px;font-family:'Montserrat';font-weight:800;font-size:18px;border:none;border-radius:13px;background:var(--teal);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:.5px;}
+  .bigbtn:active{opacity:.8;}
+  .bigbtn.coral{background:var(--coral);}
+  .bigbtn:disabled{opacity:.5;}
+  .ghost{background:var(--card2);color:var(--accent);font-weight:700;border:none;border-radius:11px;padding:12px 16px;font-size:14px;cursor:pointer;font-family:'Montserrat';}
+  .prev{margin-top:13px;border-radius:11px;overflow:hidden;border:1px solid var(--line);}
+  .prev img{width:100%;display:block;max-height:360px;object-fit:contain;background:#eef2f5;}
+  .prev .m{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;font-size:12px;color:var(--muted);}
+  .prev .m b{color:var(--navy);}
+  table{width:100%;border-collapse:collapse;}
+  th{background:var(--navy);color:#fff;font-family:'Montserrat';font-weight:700;font-size:10px;letter-spacing:.5px;text-transform:uppercase;text-align:left;padding:9px 10px;}
+  th.n,td.n{text-align:right;}
+  td{padding:7px 10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle;}
+  td input{width:100%;border:1px solid var(--line);border-radius:7px;padding:8px;font-size:14px;font-family:inherit;background:#fff;color:var(--text);}
+  td input.pb{width:58px;text-align:right;}
+  td input.bx{width:58px;text-align:right;font-weight:700;}
+  tr.review td{background:var(--warnbg);}
+  .prod input{font-weight:600;color:var(--navy);}
+  .del{background:none;border:none;color:var(--coral);font-size:20px;cursor:pointer;line-height:1;padding:0 4px;}
+  tfoot td{font-family:'Montserrat';font-weight:800;color:var(--navy);background:#eaf3f4;border-top:2px solid var(--teal);font-size:14px;}
+  .reviewtag{display:inline-block;font-size:9px;font-weight:800;color:var(--warn);background:#f5c4b3;border-radius:5px;padding:2px 5px;margin-left:5px;vertical-align:middle;letter-spacing:.4px;}
+  .verified{display:inline-flex;align-items:center;gap:7px;margin-top:13px;background:var(--greenbg);color:var(--green);font-size:12px;font-weight:800;font-family:'Montserrat';padding:8px 12px;border-radius:9px;}
+  .field{margin-bottom:12px;}
+  .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:800;font-family:'Montserrat';margin-bottom:6px;display:block;}
+  .field input,textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:11px;font-size:14px;font-family:inherit;background:#fff;color:var(--text);}
+  textarea{min-height:165px;line-height:1.5;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;resize:vertical;}
+  .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:13px;}
+  .chan{font-size:12.5px;color:var(--muted);}.chan b{color:var(--accent);}
+  .note{font-size:11.5px;color:var(--muted);margin-top:9px;line-height:1.45;}
+  .status{font-size:13px;font-weight:700;margin-top:11px;padding:10px 12px;border-radius:9px;display:none;}
+  .status.show{display:block;}
+  .status.ok{background:var(--greenbg);color:var(--green);}
+  .status.err{background:var(--warnbg);color:var(--warn);}
+  .status.busy{background:#eaf3f4;color:var(--accent);}
+  .status a{color:var(--green);font-weight:800;}
+  .hide{display:none;}
+  .spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;display:inline-block;animation:sp .7s linear infinite;}
+  @keyframes sp{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1><img src="logo-wordmark.png" alt="LCL Ocean Services" style="height:28px;width:auto;object-fit:contain"> Warehouse Inventory</h1>
+  <span style="display:flex;align-items:center;gap:8px;">
+    <!-- This app runs on its own Render domain, so these point at the hub's full URL.
+         If the hub lives somewhere other than https://sports-center-sorter.web.app, update both links below. -->
+    <a class="hublink" href="https://sports-center-sorter.web.app/app-guides.html" style="background:#eaf3f4;color:#3f9aa7">Guide</a>
+    <a class="hublink" href="https://sports-center-sorter.web.app/index.html">&#8592; Hub</a>
+  </span>
+</header>
+
+<main>
+  <!-- STEP 1 -->
+  <div class="card">
+    <div class="ch"><span class="sn">1</span><h2>Take Photo</h2></div>
+    <div class="cb">
+      <button id="shootBtn" class="bigbtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19V8a2 2 0 0 0-2-2h-3l-2-3H10L8 6H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2z"/><circle cx="12" cy="13" r="4"/></svg> Take / Choose Photo</button>
+      <input id="file" type="file" accept="image/*" capture="environment" class="hide">
+      <div id="prevWrap" class="prev hide">
+        <img id="prevImg" alt="receiving photo">
+        <div class="m"><span><b id="prevName"></b></span><button id="changeBtn" class="ghost" style="padding:6px 12px;font-size:12px">Change</button></div>
+      </div>
+      <button id="countBtn" class="bigbtn coral hide" style="margin-top:13px"><span id="countLbl">Count Boxes</span></button>
+      <div class="note">Best results: lay boxes flat in a single layer, good light, shoot straight down. Stacked boxes get flagged for a recount instead of guessed.</div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="step2" class="card hide">
+    <div class="ch"><span class="sn">2</span><h2>Verify Count</h2></div>
+    <div class="cb" style="padding:0">
+      <table>
+        <thead><tr><th>Product</th><th>Variant</th><th class="n">Per Box</th><th class="n">Boxes</th><th class="n">Total</th><th></th></tr></thead>
+        <tbody id="tbody"></tbody>
+        <tfoot><tr><td colspan="3">TOTALS</td><td class="n" id="tBoxes">0</td><td class="n" id="tUnits">0</td><td></td></tr></tfoot>
+      </table>
+      <div style="padding:14px 15px">
+        <button id="addRow" class="ghost">+ Add product</button>
+        <div id="verifyBadge" class="verified"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg> <span id="verifyText">Exact count verified</span></div>
+        <div id="notesLine" class="note hide"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div id="step3" class="card hide">
+    <div class="ch"><span class="sn">3</span><h2>Post to Slack</h2></div>
+    <div class="cb">
+      <div class="field"><label class="lbl">PO / Reference (optional)</label><input id="po" placeholder="e.g. 9323865" inputmode="numeric"></div>
+      <label class="lbl">Message (editable)</label>
+      <textarea id="msg"></textarea>
+      <div class="row">
+        <button id="postBtn" class="bigbtn coral" style="flex:1"><span id="postLbl">Post to Slack</span></button>
+      </div>
+      <div class="chan" style="margin-top:10px">Posts the photo + this message to <b>#warehouse-inventory-app</b></div>
+      <div id="status" class="status"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+let photoFile = null;
+let items = [];
+let serverNotes = '';
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function totals(){
+  const boxes = items.reduce((a,b)=>a+(Number(b.boxes)||0),0);
+  const units = items.reduce((a,b)=>a+(Number(b.perBox)||0)*(Number(b.boxes)||0),0);
+  return {boxes, units};
+}
+
+function renderTable(){
+  const tb = $('tbody'); tb.innerHTML='';
+  items.forEach((it,i)=>{
+    const tot=(Number(it.perBox)||0)*(Number(it.boxes)||0);
+    const tr=document.createElement('tr');
+    if(it.needs_review) tr.className='review';
+    tr.innerHTML =
+      '<td class="prod"><input data-i="'+i+'" data-k="brand" value="'+esc(it.brand)+'">'+(it.needs_review?'<span class="reviewtag">RECOUNT</span>':'')+'</td>'+
+      '<td><input data-i="'+i+'" data-k="variant" value="'+esc(it.variant)+'"></td>'+
+      '<td class="n"><input class="pb" type="number" min="0" inputmode="numeric" data-i="'+i+'" data-k="perBox" value="'+(it.perBox??'')+'"></td>'+
+      '<td class="n"><input class="bx" type="number" min="0" inputmode="numeric" data-i="'+i+'" data-k="boxes" value="'+(it.boxes??'')+'"></td>'+
+      '<td class="n">'+tot+'</td>'+
+      '<td><button class="del" data-del="'+i+'" aria-label="remove">&times;</button></td>';
+    tb.appendChild(tr);
+  });
+  const t=totals(); $('tBoxes').textContent=t.boxes; $('tUnits').textContent=t.units;
+
+  tb.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{
+    const i=+e.target.dataset.i, k=e.target.dataset.k;
+    items[i][k] = (k==='perBox'||k==='boxes') ? (e.target.value===''?'':Number(e.target.value)) : e.target.value;
+    if(k==='perBox'||k==='boxes'){ renderTable(); buildMsg(); } else buildMsg();
+  }));
+  tb.querySelectorAll('.del').forEach(b=>b.addEventListener('click',e=>{ items.splice(+e.target.dataset.del,1); renderTable(); buildMsg(); }));
+
+  const review = items.some(it=>it.needs_review);
+  const badge=$('verifyBadge'), vt=$('verifyText');
+  if(review){ badge.style.background='var(--warnbg)'; badge.style.color='var(--warn)'; vt.textContent='Some items flagged — recount before posting'; }
+  else { badge.style.background='var(--greenbg)'; badge.style.color='var(--green)'; vt.textContent='Exact count verified'; }
+}
+
+function buildMsg(){
+  const t=totals();
+  const lines=items.filter(it=>it.brand).map(it=>{
+    const tot=(Number(it.perBox)||0)*(Number(it.boxes)||0);
+    const pb = it.perBox? ' ('+it.perBox+'-ct)':'';
+    const bx = Number(it.boxes)||0;
+    return '• '+it.brand+(it.variant?' – '+it.variant:'')+pb+' — '+bx+' '+(bx===1?'box':'boxes')+' — '+tot+' units'+(it.needs_review?'  ⚠ recount':'');
+  }).join('\n');
+  const po=$('po').value.trim();
+  const ref = po? ' / PO# '+po : '';
+  const msg=':anchor: *LCL Ocean Services — Receiving Check*'+ref+'\n\n'+lines+'\n\n*Totals:* '+t.boxes+' boxes / '+t.units+' units'+
+    (items.some(it=>it.needs_review)?'\n:warning: Some items need a recount (flagged above).':'\n:white_check_mark: Exact count — single layer verified');
+  $('msg').value=msg;
+}
+
+// Downscale big phone photos so the vision API and Slack uploads stay fast and within limits.
+function resizeImage(file, maxDim){
+  return new Promise((resolve)=>{
+    const img=new Image();
+    img.onload=()=>{
+      let {width:w, height:h}=img;
+      if(Math.max(w,h)>maxDim){ const s=maxDim/Math.max(w,h); w=Math.round(w*s); h=Math.round(h*s); }
+      const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      cv.toBlob(b=>{
+        if(!b){ resolve(file); return; }
+        const name=(file.name||'receiving').replace(/\.[^.]+$/,'')+'.jpg';
+        resolve(new File([b], name, {type:'image/jpeg'}));
+      },'image/jpeg',0.85);
+    };
+    img.onerror=()=>resolve(file);
+    img.src=URL.createObjectURL(file);
+  });
+}
+
+async function showPhoto(f){
+  photoFile = await resizeImage(f, 1600);
+  const r=new FileReader();
+  r.onload=e=>{ $('prevImg').src=e.target.result; $('prevName').textContent=photoFile.name; $('prevWrap').classList.remove('hide'); $('countBtn').classList.remove('hide'); };
+  r.readAsDataURL(photoFile);
+}
+
+async function runCount(){
+  if(!photoFile) return;
+  const btn=$('countBtn'), lbl=$('countLbl');
+  btn.disabled=true; lbl.innerHTML='<span class="spin"></span> Counting…';
+  try{
+    const fd=new FormData(); fd.append('photo', photoFile, photoFile.name);
+    const r=await fetch('/api/count',{method:'POST',body:fd});
+    const data=await r.json();
+    if(!r.ok) throw new Error((data && data.error) || 'Count failed');
+    items=(data.items||[]).map(it=>({brand:it.brand||'',variant:it.variant||'',perBox:it.perBox??'',boxes:it.boxes??0,needs_review:!!it.needs_review}));
+    serverNotes=data.notes||'';
+    if(items.length===0) items.push({brand:'',variant:'',perBox:'',boxes:0,needs_review:false});
+    renderTable(); buildMsg();
+    $('step2').classList.remove('hide'); $('step3').classList.remove('hide');
+    if(serverNotes){ const n=$('notesLine'); n.textContent='Note: '+serverNotes; n.classList.remove('hide'); }
+    $('step2').scrollIntoView({behavior:'smooth'});
+  }catch(e){
+    items=[{brand:'',variant:'',perBox:'',boxes:0,needs_review:false}];
+    renderTable(); buildMsg();
+    $('step2').classList.remove('hide'); $('step3').classList.remove('hide');
+    const n=$('notesLine'); n.textContent='Auto-count unavailable ('+e.message+'). Enter the counts manually.'; n.classList.remove('hide');
+  }finally{ btn.disabled=false; lbl.textContent='Re-count'; }
+}
+
+async function post(){
+  const st=$('status'), btn=$('postBtn'), lbl=$('postLbl');
+  st.className='status show busy'; st.textContent='Posting photo + message to Slack…';
+  btn.disabled=true; lbl.innerHTML='<span class="spin"></span> Posting…';
+  try{
+    const fd=new FormData();
+    fd.append('photo', photoFile, photoFile.name);
+    fd.append('message', $('msg').value);
+    const r=await fetch('/api/post',{method:'POST',body:fd});
+    const data=await r.json();
+    if(!r.ok || !data.ok) throw new Error((data && data.error) || 'Post failed');
+    st.className='status show ok';
+    st.innerHTML='✓ Posted to #warehouse-inventory-app.'+(data.permalink?' <a href="'+data.permalink+'" target="_blank" rel="noopener">View in Slack ↗</a>':'');
+  }catch(e){
+    st.className='status show err'; st.textContent='Could not post: '+e.message;
+  }finally{ btn.disabled=false; lbl.textContent='Post to Slack'; }
+}
+
+$('shootBtn').addEventListener('click',()=>$('file').click());
+$('changeBtn').addEventListener('click',()=>$('file').click());
+$('file').addEventListener('change',e=>{ if(e.target.files[0]) showPhoto(e.target.files[0]); });
+$('countBtn').addEventListener('click',runCount);
+$('addRow').addEventListener('click',()=>{ items.push({brand:'',variant:'',perBox:24,boxes:0,needs_review:false}); renderTable(); buildMsg(); });
+$('po').addEventListener('input',buildMsg);
+$('postBtn').addEventListener('click',post);
+</script>
+</body>
+</html>
