@@ -50,7 +50,7 @@ function extractJson(text) {
   }
 }
 
-const COUNT_PROMPT = `You are a warehouse receiving assistant for LCL Ocean Services, looking at a photo of incoming freight laid out for a receiving count. The items can be ANYTHING — coffee, electronics, apparel, auto parts, tools, household goods, food, etc. Do not assume a category.
+const COUNT_PROMPT = `You are a warehouse receiving assistant for LCL Ocean Services, looking at one or more photos of incoming freight laid out for a receiving count. When several photos are provided, each shows a DIFFERENT part of the same shipment — count across all of them and merge identical products into a single line by summing their quantities. The items can be ANYTHING — coffee, electronics, apparel, auto parts, tools, household goods, food, etc. Do not assume a category.
 
 For every distinct product in the photo, identify:
 - name: what the product is (brand + product name if visible; otherwise a clear plain description like "white cardboard box", "car tire", "bottled water case").
@@ -68,9 +68,9 @@ Return ONLY valid JSON, no prose, in exactly this shape:
 {"items":[{"name":"","detail":"","perUnit":1,"qty":0,"needs_review":false}],"notes":""}
 Use "notes" for any short caveat the receiver should know (e.g. which product needs a recount).`;
 
-const IDENTIFY_PROMPT = `You are a warehouse receiving assistant for LCL Ocean Services. The photo shows ONE item — a single product or a single box/case — that the receiver is holding up. The item can be anything.
+const IDENTIFY_PROMPT = `You are a warehouse receiving assistant for LCL Ocean Services. Each photo shows ONE item — a single product or a single box/case — that the receiver is holding up. There may be several photos, each showing a different item. The items can be anything.
 
-Identify just this one item:
+Identify each item shown (one entry per photo):
 - name: brand + product name if visible, otherwise a clear plain description.
 - detail: variant, flavor, model, size, or color as printed (use "" if none).
 - perUnit: if it is a multi-pack/case with a printed count (e.g. "12 ct"), that number; otherwise 1.
@@ -80,14 +80,17 @@ Do NOT count quantity — the receiver will type how many there are by hand.
 Return ONLY valid JSON, no prose, in exactly this shape:
 {"items":[{"name":"","detail":"","perUnit":1,"qty":null,"needs_review":false}],"notes":""}`;
 
-app.post('/api/count', upload.single('photo'), async (req, res) => {
+app.post('/api/count', upload.array('photos', 12), async (req, res) => {
   try {
     if (!ANTHROPIC_API_KEY) return res.status(500).json({ error: 'Server is missing ANTHROPIC_API_KEY.' });
-    if (!req.file) return res.status(400).json({ error: 'No photo was uploaded.' });
+    if (!req.files || !req.files.length) return res.status(400).json({ error: 'No photos were uploaded.' });
 
-    const b64 = req.file.buffer.toString('base64');
-    const media = req.file.mimetype || 'image/jpeg';
     const prompt = (req.body.mode === 'identify') ? IDENTIFY_PROMPT : COUNT_PROMPT;
+    const content = req.files.map((f) => ({
+      type: 'image',
+      source: { type: 'base64', media_type: f.mimetype || 'image/jpeg', data: f.buffer.toString('base64') },
+    }));
+    content.push({ type: 'text', text: prompt });
 
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -98,14 +101,8 @@ app.post('/api/count', upload.single('photo'), async (req, res) => {
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 1500,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image', source: { type: 'base64', media_type: media, data: b64 } },
-            { type: 'text', text: prompt },
-          ],
-        }],
+        max_tokens: 2000,
+        messages: [{ role: 'user', content }],
       }),
     });
 
@@ -121,37 +118,42 @@ app.post('/api/count', upload.single('photo'), async (req, res) => {
   }
 });
 
-app.post('/api/post', upload.single('photo'), async (req, res) => {
+app.post('/api/post', upload.array('photos', 12), async (req, res) => {
   try {
     if (!SLACK_BOT_TOKEN || !SLACK_CHANNEL_ID) {
       return res.status(500).json({ error: 'Server is missing SLACK_BOT_TOKEN or SLACK_CHANNEL_ID.' });
     }
-    if (!req.file) return res.status(400).json({ error: 'No photo to post.' });
+    if (!req.files || !req.files.length) return res.status(400).json({ error: 'No photos to post.' });
 
     const message = req.body.message || '';
-    const filename = req.file.originalname || 'receiving.jpg';
-    const buf = req.file.buffer;
 
-    // 1) ask Slack for an upload URL
-    const getUrl = `https://slack.com/api/files.getUploadURLExternal?filename=${encodeURIComponent(filename)}&length=${buf.length}`;
-    const g = await (await fetch(getUrl, { headers: { Authorization: `Bearer ${SLACK_BOT_TOKEN}` } })).json();
-    if (!g.ok) return res.status(502).json({ error: 'Slack getUploadURLExternal failed', detail: g });
+    // Upload each photo to Slack, collecting the file ids.
+    const uploaded = [];
+    for (let i = 0; i < req.files.length; i++) {
+      const f = req.files[i];
+      const filename = f.originalname || `receiving-${i + 1}.jpg`;
+      const buf = f.buffer;
 
-    // 2) upload the raw photo bytes to that URL
-    const form = new FormData();
-    form.append('file', new Blob([buf], { type: req.file.mimetype || 'image/jpeg' }), filename);
-    const up = await fetch(g.upload_url, { method: 'POST', body: form });
-    if (!up.ok) {
-      const detail = await up.text();
-      return res.status(502).json({ error: 'Slack file upload failed', detail });
+      const getUrl = `https://slack.com/api/files.getUploadURLExternal?filename=${encodeURIComponent(filename)}&length=${buf.length}`;
+      const g = await (await fetch(getUrl, { headers: { Authorization: `Bearer ${SLACK_BOT_TOKEN}` } })).json();
+      if (!g.ok) return res.status(502).json({ error: 'Slack getUploadURLExternal failed', detail: g });
+
+      const form = new FormData();
+      form.append('file', new Blob([buf], { type: f.mimetype || 'image/jpeg' }), filename);
+      const up = await fetch(g.upload_url, { method: 'POST', body: form });
+      if (!up.ok) {
+        const detail = await up.text();
+        return res.status(502).json({ error: 'Slack file upload failed', detail });
+      }
+      uploaded.push({ id: g.file_id, title: filename });
     }
 
-    // 3) complete the upload AND post it to the channel with the message as the comment
+    // Complete the upload of ALL photos and post them together with the message as the comment.
     const c = await (await fetch('https://slack.com/api/files.completeUploadExternal', {
       method: 'POST',
       headers: { 'content-type': 'application/json', Authorization: `Bearer ${SLACK_BOT_TOKEN}` },
       body: JSON.stringify({
-        files: [{ id: g.file_id, title: filename }],
+        files: uploaded,
         channel_id: SLACK_CHANNEL_ID,
         initial_comment: message,
       }),

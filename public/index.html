@@ -35,6 +35,11 @@
   .prev img{width:100%;display:block;max-height:360px;object-fit:contain;background:#eef2f5;}
   .prev .m{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;font-size:12px;color:var(--muted);}
   .prev .m b{color:var(--navy);}
+  .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;margin-top:13px;}
+  .thumb{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#eef2f5;}
+  .thumb img{width:100%;height:92px;object-fit:cover;display:block;}
+  .thumb .x{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:none;background:rgba(24,41,77,.8);color:#fff;font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .thumbcount{font-size:11.5px;color:var(--muted);margin-top:9px;font-weight:600;}
   table{width:100%;border-collapse:collapse;}
   th{background:var(--navy);color:#fff;font-family:'Montserrat';font-weight:700;font-size:10px;letter-spacing:.5px;text-transform:uppercase;text-align:left;padding:9px 10px;}
   th.n,td.n{text-align:right;}
@@ -99,13 +104,11 @@
         <button id="uploadBtn" class="bigbtn outline"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg> Upload</button>
       </div>
       <input id="fileCamera" type="file" accept="image/*" capture="environment" class="hide">
-      <input id="fileUpload" type="file" accept="image/*" class="hide">
-      <div id="prevWrap" class="prev hide">
-        <img id="prevImg" alt="receiving photo">
-        <div class="m"><span><b id="prevName"></b></span></div>
-      </div>
+      <input id="fileUpload" type="file" accept="image/*" multiple class="hide">
+      <div id="thumbs" class="thumbs hide"></div>
+      <div id="thumbCount" class="thumbcount hide"></div>
       <button id="countBtn" class="bigbtn coral hide" style="margin-top:13px"><span id="countLbl">Count Items</span></button>
-      <div id="hintCount" class="note">Lay items in a single layer, good light, shoot straight down. Anything stacked gets flagged for a recount instead of guessed.</div>
+      <div id="hintCount" class="note">Add as many photos as you need — tap Take Photo or Upload again to add more, and they're counted together. Lay items in a single layer, good light, shoot straight down. Anything stacked gets flagged for a recount instead of guessed.</div>
       <div id="hintSingle" class="note hide">Snap a clear shot of one item. It identifies what it is, then you type the quantity on the next step.</div>
     </div>
   </div>
@@ -146,7 +149,7 @@
 </main>
 
 <script>
-let photoFile = null;
+let photoFiles = [];
 let items = [];
 let mode = 'count';
 let serverNotes = '';
@@ -241,22 +244,41 @@ function resizeImage(file, maxDim){
   });
 }
 
-async function showPhoto(f){
-  photoFile = await resizeImage(f, 1600);
-  const r=new FileReader();
-  r.onload=e=>{
-    $('prevImg').src=e.target.result; $('prevName').textContent=photoFile.name;
-    $('prevWrap').classList.remove('hide'); $('countBtn').classList.remove('hide'); $('clearBtn').classList.remove('hide');
-  };
-  r.readAsDataURL(photoFile);
+function renderThumbs(){
+  const wrap=$('thumbs'); wrap.innerHTML='';
+  photoFiles.forEach((pf,i)=>{
+    const d=document.createElement('div'); d.className='thumb';
+    d.innerHTML='<img src="'+pf.url+'" alt="photo '+(i+1)+'"><button class="x" data-rm="'+i+'" aria-label="remove">&times;</button>';
+    wrap.appendChild(d);
+  });
+  wrap.querySelectorAll('.x').forEach(b=>b.addEventListener('click',e=>{
+    const i=+e.target.dataset.rm; URL.revokeObjectURL(photoFiles[i].url); photoFiles.splice(i,1); renderThumbs();
+  }));
+  const has=photoFiles.length>0;
+  wrap.classList.toggle('hide',!has);
+  $('countBtn').classList.toggle('hide',!has);
+  $('clearBtn').classList.toggle('hide',!has);
+  const tc=$('thumbCount');
+  tc.classList.toggle('hide',!has);
+  tc.textContent = has ? (photoFiles.length+' photo'+(photoFiles.length>1?'s':'')+' added') : '';
+}
+
+async function addPhotos(fileList){
+  for(const f of Array.from(fileList)){
+    const resized=await resizeImage(f, 1600);
+    photoFiles.push({file:resized, url:URL.createObjectURL(resized)});
+  }
+  renderThumbs();
 }
 
 async function runCount(){
-  if(!photoFile) return;
+  if(!photoFiles.length) return;
   const btn=$('countBtn'), lbl=$('countLbl');
   btn.disabled=true; lbl.innerHTML='<span class="spin"></span> '+(mode==='identify'?'Identifying…':'Counting…');
   try{
-    const fd=new FormData(); fd.append('photo', photoFile, photoFile.name); fd.append('mode', mode);
+    const fd=new FormData();
+    photoFiles.forEach(pf=>fd.append('photos', pf.file, pf.file.name));
+    fd.append('mode', mode);
     const r=await fetch('/api/count',{method:'POST',body:fd});
     const data=await r.json();
     if(!r.ok) throw new Error((data && data.error) || 'Count failed');
@@ -284,7 +306,7 @@ async function post(){
   btn.disabled=true; lbl.innerHTML='<span class="spin"></span> Posting…';
   try{
     const fd=new FormData();
-    fd.append('photo', photoFile, photoFile.name);
+    photoFiles.forEach(pf=>fd.append('photos', pf.file, pf.file.name));
     fd.append('message', $('msg').value);
     const r=await fetch('/api/post',{method:'POST',body:fd});
     const data=await r.json();
@@ -298,10 +320,11 @@ async function post(){
 }
 
 function resetAll(){
-  photoFile=null; items=[]; serverNotes='';
+  photoFiles.forEach(pf=>URL.revokeObjectURL(pf.url));
+  photoFiles=[]; items=[]; serverNotes='';
   $('wr').value='';
   $('fileCamera').value=''; $('fileUpload').value='';
-  $('prevWrap').classList.add('hide'); $('countBtn').classList.add('hide'); $('clearBtn').classList.add('hide');
+  renderThumbs();
   $('step3').classList.add('hide'); $('step4').classList.add('hide'); $('newBtn').classList.add('hide');
   const st=$('status'); st.className='status'; st.textContent='';
   $('msg').value=''; $('tbody').innerHTML=''; updateFooter();
@@ -313,8 +336,8 @@ $('modeCount').addEventListener('click',()=>setMode('count'));
 $('modeSingle').addEventListener('click',()=>setMode('identify'));
 $('cameraBtn').addEventListener('click',()=>$('fileCamera').click());
 $('uploadBtn').addEventListener('click',()=>$('fileUpload').click());
-$('fileCamera').addEventListener('change',e=>{ if(e.target.files[0]) showPhoto(e.target.files[0]); });
-$('fileUpload').addEventListener('change',e=>{ if(e.target.files[0]) showPhoto(e.target.files[0]); });
+$('fileCamera').addEventListener('change',e=>{ if(e.target.files.length) addPhotos(e.target.files); e.target.value=''; });
+$('fileUpload').addEventListener('change',e=>{ if(e.target.files.length) addPhotos(e.target.files); e.target.value=''; });
 $('countBtn').addEventListener('click',runCount);
 $('addRow').addEventListener('click',()=>{ items.push({name:'',detail:'',perUnit:1,qty:'',needs_review:false}); renderTable(); buildMsg(); });
 $('wr').addEventListener('input',buildMsg);
