@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Warehouse Inventory — LCL Ocean Services</title>
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,9 +21,12 @@
   .sn{width:23px;height:23px;border-radius:50%;background:var(--teal);color:#fff;font-family:'Montserrat';font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;}
   .ch h2{font-family:'Montserrat';font-weight:800;font-size:14px;color:var(--navy);margin:0;letter-spacing:.4px;text-transform:uppercase;}
   .cb{padding:15px;}
-  .bigbtn{width:100%;padding:18px;font-family:'Montserrat';font-weight:800;font-size:18px;border:none;border-radius:13px;background:var(--teal);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:.5px;}
+  .bigbtn{width:100%;padding:18px;font-family:'Montserrat';font-weight:800;font-size:17px;border:none;border-radius:13px;background:var(--teal);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;letter-spacing:.4px;}
   .bigbtn:active{opacity:.8;}.bigbtn.coral{background:var(--coral);}.bigbtn:disabled{opacity:.5;}
+  .bigbtn.outline{background:#fff;color:var(--accent);border:2px solid var(--accent);}
   .ghost{background:var(--card2);color:var(--accent);font-weight:700;border:none;border-radius:11px;padding:12px 16px;font-size:14px;cursor:pointer;font-family:'Montserrat';}
+  .photobtns{display:flex;gap:10px;}
+  .photobtns .bigbtn{font-size:15px;padding:16px 10px;}
   .modes{display:flex;gap:8px;margin-bottom:13px;}
   .mode{flex:1;padding:12px 8px;border:2px solid var(--card2);border-radius:11px;background:var(--card);cursor:pointer;text-align:center;font-family:'Montserrat';font-weight:700;font-size:13px;color:var(--muted);line-height:1.25;}
   .mode small{display:block;font-family:'Inter';font-weight:500;font-size:11px;margin-top:3px;}
@@ -36,21 +39,20 @@
   th{background:var(--navy);color:#fff;font-family:'Montserrat';font-weight:700;font-size:10px;letter-spacing:.5px;text-transform:uppercase;text-align:left;padding:9px 10px;}
   th.n,td.n{text-align:right;}
   td{padding:7px 10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle;}
-  td input{width:100%;border:1px solid var(--line);border-radius:7px;padding:8px;font-size:14px;font-family:inherit;background:#fff;color:var(--text);}
-  td input.pu{width:56px;text-align:right;}
-  td input.qt{width:56px;text-align:right;font-weight:700;}
+  td input{width:100%;border:1px solid var(--line);border-radius:7px;padding:8px;font-size:16px;font-family:inherit;background:#fff;color:var(--text);}
+  td input.pu{width:58px;text-align:right;}
+  td input.qt{width:58px;text-align:right;font-weight:700;}
   tr.review td{background:var(--warnbg);}
   .prod input{font-weight:600;color:var(--navy);}
   .del{background:none;border:none;color:var(--coral);font-size:20px;cursor:pointer;line-height:1;padding:0 4px;}
   tfoot td{font-family:'Montserrat';font-weight:800;color:var(--navy);background:#eaf3f4;border-top:2px solid var(--teal);font-size:14px;}
   .reviewtag{display:inline-block;font-size:9px;font-weight:800;color:var(--warn);background:#f5c4b3;border-radius:5px;padding:2px 5px;margin-left:5px;vertical-align:middle;letter-spacing:.4px;}
   .verified{display:inline-flex;align-items:center;gap:7px;margin-top:13px;background:var(--greenbg);color:var(--green);font-size:12px;font-weight:800;font-family:'Montserrat';padding:8px 12px;border-radius:9px;}
-  .field{margin-bottom:12px;}
+  .field{margin-bottom:4px;}
   .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:800;font-family:'Montserrat';margin-bottom:6px;display:block;}
-  .field input,textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:11px;font-size:14px;font-family:inherit;background:#fff;color:var(--text);}
-  .field input.wr{font-family:'Montserrat';font-weight:800;font-size:18px;letter-spacing:1px;color:var(--navy);border:2px solid var(--teal);}
-  textarea{min-height:170px;line-height:1.5;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;resize:vertical;}
-  .two{display:flex;gap:12px;}.two>div{flex:1;}
+  .field input,textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:11px;font-size:16px;font-family:inherit;background:#fff;color:var(--text);}
+  .field input.wr{font-family:'Montserrat';font-weight:800;font-size:19px;letter-spacing:1px;color:var(--navy);border:2px solid var(--teal);}
+  textarea{min-height:170px;line-height:1.5;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;resize:vertical;}
   .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:13px;}
   .chan{font-size:12.5px;color:var(--muted);}.chan b{color:var(--accent);}
   .note{font-size:11.5px;color:var(--muted);margin-top:9px;line-height:1.45;}
@@ -80,10 +82,7 @@
   <div class="card">
     <div class="ch"><span class="sn">1</span><h2>Receipt Details</h2></div>
     <div class="cb">
-      <div class="two">
-        <div class="field"><label class="lbl">Warehouse Receipt #</label><input id="wr" class="wr" placeholder="WR #" inputmode="numeric"></div>
-        <div class="field"><label class="lbl">PO / Ref (optional)</label><input id="po" placeholder="e.g. 9323865" inputmode="numeric"></div>
-      </div>
+      <div class="field"><label class="lbl">Warehouse Receipt #</label><input id="wr" class="wr" placeholder="WR #" inputmode="numeric"></div>
     </div>
   </div>
 
@@ -95,11 +94,15 @@
         <div class="mode sel" id="modeCount" data-mode="count">Count everything<small>Counts each item in the photo</small></div>
         <div class="mode" id="modeSingle" data-mode="identify">One item — set qty<small>Snap one item, you type how many</small></div>
       </div>
-      <button id="shootBtn" class="bigbtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19V8a2 2 0 0 0-2-2h-3l-2-3H10L8 6H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2z"/><circle cx="12" cy="13" r="4"/></svg> Take / Choose Photo</button>
-      <input id="file" type="file" accept="image/*" class="hide">
+      <div class="photobtns">
+        <button id="cameraBtn" class="bigbtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19V8a2 2 0 0 0-2-2h-3l-2-3H10L8 6H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2z"/><circle cx="12" cy="13" r="4"/></svg> Take Photo</button>
+        <button id="uploadBtn" class="bigbtn outline"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg> Upload</button>
+      </div>
+      <input id="fileCamera" type="file" accept="image/*" capture="environment" class="hide">
+      <input id="fileUpload" type="file" accept="image/*" class="hide">
       <div id="prevWrap" class="prev hide">
         <img id="prevImg" alt="receiving photo">
-        <div class="m"><span><b id="prevName"></b></span><button id="changeBtn" class="ghost" style="padding:6px 12px;font-size:12px">Change</button></div>
+        <div class="m"><span><b id="prevName"></b></span></div>
       </div>
       <button id="countBtn" class="bigbtn coral hide" style="margin-top:13px"><span id="countLbl">Count Items</span></button>
       <div id="hintCount" class="note">Lay items in a single layer, good light, shoot straight down. Anything stacked gets flagged for a recount instead of guessed.</div>
@@ -134,8 +137,12 @@
       <div class="row"><button id="postBtn" class="bigbtn coral" style="flex:1"><span id="postLbl">Post to Slack</span></button></div>
       <div class="chan" style="margin-top:10px">Posts the photo + this message to <b>#warehouse-inventory-app</b></div>
       <div id="status" class="status"></div>
+      <button id="newBtn" class="bigbtn outline hide" style="margin-top:13px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Start New Inventory</button>
     </div>
   </div>
+
+  <!-- always-available reset once a photo is loaded -->
+  <button id="clearBtn" class="bigbtn outline hide" style="margin-bottom:24px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg> Clear &amp; start over</button>
 </main>
 
 <script>
@@ -152,7 +159,10 @@ function totals(){
   const units = items.reduce((a,b)=>a+(Number(b.perUnit)||0)*(Number(b.qty)||0),0);
   return {qty, units};
 }
+function updateFooter(){ const t=totals(); $('tQty').textContent=t.qty; $('tUnits').textContent=t.units; }
 
+// Build the table ONCE per count. Editing cells updates data in place — it never
+// rebuilds the inputs, so focus (and the on-screen keyboard) stays put while typing.
 function renderTable(){
   const tb = $('tbody'); tb.innerHTML='';
   items.forEach((it,i)=>{
@@ -164,16 +174,21 @@ function renderTable(){
       '<td><input data-i="'+i+'" data-k="detail" value="'+esc(it.detail)+'"></td>'+
       '<td class="n"><input class="pu" type="number" min="0" inputmode="numeric" data-i="'+i+'" data-k="perUnit" value="'+(it.perUnit??'')+'"></td>'+
       '<td class="n"><input class="qt" type="number" min="0" inputmode="numeric" data-i="'+i+'" data-k="qty" value="'+(it.qty??'')+'"></td>'+
-      '<td class="n">'+tot+'</td>'+
+      '<td class="n" data-tot="'+i+'">'+tot+'</td>'+
       '<td><button class="del" data-del="'+i+'" aria-label="remove">&times;</button></td>';
     tb.appendChild(tr);
   });
-  const t=totals(); $('tQty').textContent=t.qty; $('tUnits').textContent=t.units;
+  updateFooter();
 
   tb.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{
     const i=+e.target.dataset.i, k=e.target.dataset.k;
     items[i][k] = (k==='perUnit'||k==='qty') ? (e.target.value===''?'':Number(e.target.value)) : e.target.value;
-    if(k==='perUnit'||k==='qty'){ renderTable(); buildMsg(); } else buildMsg();
+    if(k==='perUnit'||k==='qty'){
+      const cell=tb.querySelector('[data-tot="'+i+'"]');
+      if(cell) cell.textContent=(Number(items[i].perUnit)||0)*(Number(items[i].qty)||0);
+      updateFooter();
+    }
+    buildMsg(); // updates the message textarea only — does not touch the table inputs
   }));
   tb.querySelectorAll('.del').forEach(b=>b.addEventListener('click',e=>{ items.splice(+e.target.dataset.del,1); renderTable(); buildMsg(); }));
 
@@ -192,14 +207,13 @@ function lineText(it){
 
 function buildMsg(){
   const t=totals();
-  const lines=items.filter(it=>it.name).map(it=>lineText(it)+(it.needs_review?'  ⚠ recount':'')).join('\n');
+  const lines=items.filter(it=>it.name).map(it=>lineText(it)).join('\n');
   const wr=$('wr').value.trim();
-  const po=$('po').value.trim();
-  const header = wr ? (':package: *WR# '+wr+'*\n_LCL Ocean Services — Receiving Check_'+(po?' / PO# '+po:''))
-                    : (':package: *LCL Ocean Services — Receiving Check*'+(po?' / PO# '+po:''));
-  const foot = items.some(it=>it.needs_review)
-      ? '\n:warning: Some items need a recount (flagged above).'
-      : '\n:white_check_mark: Count verified';
+  const header = wr ? (':package: *WR# '+wr+'*\n_LCL Ocean Services — Receiving Check_')
+                    : ':package: *LCL Ocean Services — Receiving Check*';
+  // Recount flags stay in the app (RECOUNT tags + amber badge) but are intentionally
+  // kept OUT of the Slack post so the channel message stays clean.
+  const foot = items.some(it=>it.needs_review) ? '' : '\n:white_check_mark: Count verified';
   $('msg').value = header+'\n\n'+lines+'\n\n*Totals:* '+t.qty+' items / '+t.units+' units'+foot;
 }
 
@@ -230,7 +244,10 @@ function resizeImage(file, maxDim){
 async function showPhoto(f){
   photoFile = await resizeImage(f, 1600);
   const r=new FileReader();
-  r.onload=e=>{ $('prevImg').src=e.target.result; $('prevName').textContent=photoFile.name; $('prevWrap').classList.remove('hide'); $('countBtn').classList.remove('hide'); };
+  r.onload=e=>{
+    $('prevImg').src=e.target.result; $('prevName').textContent=photoFile.name;
+    $('prevWrap').classList.remove('hide'); $('countBtn').classList.remove('hide'); $('clearBtn').classList.remove('hide');
+  };
   r.readAsDataURL(photoFile);
 }
 
@@ -274,21 +291,36 @@ async function post(){
     if(!r.ok || !data.ok) throw new Error((data && data.error) || 'Post failed');
     st.className='status show ok';
     st.innerHTML='✓ Posted to #warehouse-inventory-app.'+(data.permalink?' <a href="'+data.permalink+'" target="_blank" rel="noopener">View in Slack ↗</a>':'');
+    $('newBtn').classList.remove('hide');
   }catch(e){
     st.className='status show err'; st.textContent='Could not post: '+e.message;
   }finally{ btn.disabled=false; lbl.textContent='Post to Slack'; }
 }
 
+function resetAll(){
+  photoFile=null; items=[]; serverNotes='';
+  $('wr').value='';
+  $('fileCamera').value=''; $('fileUpload').value='';
+  $('prevWrap').classList.add('hide'); $('countBtn').classList.add('hide'); $('clearBtn').classList.add('hide');
+  $('step3').classList.add('hide'); $('step4').classList.add('hide'); $('newBtn').classList.add('hide');
+  const st=$('status'); st.className='status'; st.textContent='';
+  $('msg').value=''; $('tbody').innerHTML=''; updateFooter();
+  setMode('count');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
 $('modeCount').addEventListener('click',()=>setMode('count'));
 $('modeSingle').addEventListener('click',()=>setMode('identify'));
-$('shootBtn').addEventListener('click',()=>$('file').click());
-$('changeBtn').addEventListener('click',()=>$('file').click());
-$('file').addEventListener('change',e=>{ if(e.target.files[0]) showPhoto(e.target.files[0]); });
+$('cameraBtn').addEventListener('click',()=>$('fileCamera').click());
+$('uploadBtn').addEventListener('click',()=>$('fileUpload').click());
+$('fileCamera').addEventListener('change',e=>{ if(e.target.files[0]) showPhoto(e.target.files[0]); });
+$('fileUpload').addEventListener('change',e=>{ if(e.target.files[0]) showPhoto(e.target.files[0]); });
 $('countBtn').addEventListener('click',runCount);
 $('addRow').addEventListener('click',()=>{ items.push({name:'',detail:'',perUnit:1,qty:'',needs_review:false}); renderTable(); buildMsg(); });
 $('wr').addEventListener('input',buildMsg);
-$('po').addEventListener('input',buildMsg);
 $('postBtn').addEventListener('click',post);
+$('newBtn').addEventListener('click',resetAll);
+$('clearBtn').addEventListener('click',resetAll);
 </script>
 </body>
 </html>
